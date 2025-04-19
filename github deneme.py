@@ -1,1 +1,0 @@
-print('haydin bakalim github')
