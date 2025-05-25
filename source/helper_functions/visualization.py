@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from source.helper_functions.save_outputs import save_plot_to_file, save_output_to_file
 from io import StringIO
+import numpy as np
 
 
 
@@ -152,3 +153,47 @@ def analyze_data_quality(data, save_dir):
         f"\nTotal missing values: {missing_cells} ({missing_percentage:.2f}%)"
     )
     save_output_to_file(duplicates_info + missing_values_info, 'data_quality_report.txt', save_dir)
+
+
+
+
+
+
+def plot_attack_label_distribution_edge(data, column_name, save_dir):
+    """
+    Generates a pie chart for the distribution of Attack labels and saves the counts.
+
+    Args:
+        data (pd.DataFrame): The DataFrame containing the data.
+        column_name (str): The name of the column to analyze (e.g., 'Attack_label').
+        save_dir (str): The directory where outputs will be saved.
+
+    Returns:
+        None
+    """
+    if column_name in data.columns:
+        # Get value counts for attack labels
+        attack_label_counts = data[column_name].value_counts()
+        print(f"{column_name} Distribution:")
+        print(attack_label_counts)
+
+        # Create pie chart
+        plt.figure(figsize=(10, 8))
+        attack_label_counts.plot.pie(
+            autopct='%1.1f%%',
+            startangle=90,
+            colors=plt.cm.tab20(np.linspace(0, 1, len(attack_label_counts))),
+        )
+        plt.title(f"Distribution of {column_name}")
+        plt.ylabel("")  # Remove y-axis label for better visualization
+
+        # Save plot and counts
+        save_plot_to_file(plt.gcf(), f"{column_name}_distribution_pie.png", save_dir)
+        save_output_to_file(
+            f"{column_name} Distribution:\n{attack_label_counts.to_string()}",
+            f'{column_name}_counts.txt',
+            save_dir
+        )
+        plt.show()
+    else:
+        print(f"Column '{column_name}' does not exist in the DataFrame.")

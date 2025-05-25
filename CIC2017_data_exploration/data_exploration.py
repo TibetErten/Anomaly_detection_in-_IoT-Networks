@@ -24,7 +24,7 @@ data = pd.concat(dfs, axis=0, ignore_index=True)
 
 data_info = data.info()
 
-    # Capture the output of data.info() into a string
+# Capture the output of data.info() into a string
 
 buffer = StringIO()
 data.info(buf=buffer)
