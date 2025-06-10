@@ -28,20 +28,42 @@ data_info = buffer.getvalue()
 # save outputs
 save_output_to_file(data_info, 'data_info_preprossed.txt', save_dir)
 
-# train and test data split using stratified sampling
+# Train and test data split using stratified sampling
 X = data.drop(columns=['Attack_label', 'Attack_type'])
-y = data['Attack_type']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
-# Split the training data further into train (80%) and validation (20%) sets
-X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, stratify=y_train)
+y_multiclass = data['Attack_type']
+y_binary = data['Attack_label']
+
+# First split for test set
+X_train, X_test, y_train_multi, y_test_multi, y_train_binary, y_test_binary = train_test_split(
+    X, y_multiclass, y_binary,
+    test_size=0.2, 
+    stratify=y_multiclass,
+    random_state=42
+)
+
+# Split training data into train and validation
+X_train, X_val, y_train_multi, y_val_multi, y_train_binary, y_val_binary = train_test_split(
+    X_train, y_train_multi, y_train_binary,
+    test_size=0.2,
+    stratify=y_train_multi,
+    random_state=42
+)
+
 # Save the split datasets
+# Features
 X_train.to_csv(os.path.join(save_dir, 'X_train.csv'), index=False)
 X_val.to_csv(os.path.join(save_dir, 'X_val.csv'), index=False)
 X_test.to_csv(os.path.join(save_dir, 'X_test.csv'), index=False)
-y_train.to_csv(os.path.join(save_dir, 'y_train.csv'), index=False)
-y_val.to_csv(os.path.join(save_dir, 'y_val.csv'), index=False)
-y_test.to_csv(os.path.join(save_dir, 'y_test.csv'), index=False)
 
+# Multiclass labels (Attack_type)
+y_train_multi.to_csv(os.path.join(save_dir, 'y_train_type.csv'), index=False)
+y_val_multi.to_csv(os.path.join(save_dir, 'y_val_type.csv'), index=False)
+y_test_multi.to_csv(os.path.join(save_dir, 'y_test_type.csv'), index=False)
+
+# Binary labels (Attack_label)
+y_train_binary.to_csv(os.path.join(save_dir, 'y_train_label.csv'), index=False)
+y_val_binary.to_csv(os.path.join(save_dir, 'y_val_label.csv'), index=False)
+y_test_binary.to_csv(os.path.join(save_dir, 'y_test_label.csv'), index=False)
 
 
 

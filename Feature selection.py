@@ -48,26 +48,31 @@ feature_importance_df, xgb_model = analyze_feature_importance(
 
 #visualize feature importance
 
-plt.figure(figsize=(15, 10))  # Increased figure size
-plt.bar(range(len(feature_importance_df)), feature_importance_df['Importance'])
-plt.xticks(range(len(feature_importance_df)), 
-          feature_importance_df['Feature'], 
-          rotation=90,  # Vertical text
-          ha='center',  # Center alignment
-          fontsize=8)   # Smaller font size
-plt.title('Feature Importance', pad=20)  # Add padding to title
-plt.xlabel('Features', labelpad=10)
-plt.ylabel('Importance Score')
+# Sort features by importance and save to CSV
+feature_importance_df.sort_values('Importance', ascending=False, inplace=True)
 
-# Adjust layout to prevent label cutoff
-plt.subplots_adjust(bottom=0.3)  # More space at bottom for labels
-plt.tight_layout()
+# Save detailed feature importance report
+report_content = "Feature Importance Analysis\n"
+report_content += "=" * 50 + "\n\n"
+report_content += f"Total number of features: {len(feature_importance_df)}\n\n"
+report_content += "Top Features by Importance:\n"
+report_content += "-" * 50 + "\n"
 
-# Save with higher DPI for better quality
-plt.savefig(os.path.join(save_dir, 'feature_importance_plot.png'), 
-            dpi=300,
-            bbox_inches='tight')  # Ensure no labels are cut off
+# Add each feature and its importance score
+for idx, row in feature_importance_df.iterrows():
+    report_content += f"{row['Feature']}: {row['Importance']:.4f}\n"
 
+# Save the report
+with open(os.path.join(save_dir, 'feature_importance_detailed.txt'), 'w') as f:
+    f.write(report_content)
+
+# Save as CSV for easy spreadsheet viewing
+feature_importance_df.to_csv(os.path.join(save_dir, 'feature_importance_scores.csv'), 
+                           index=False)
+
+print(f"Feature importance reports saved to {save_dir}")
+print("Top 10 most important features:")
+print(feature_importance_df.head(10))
 
 
 
