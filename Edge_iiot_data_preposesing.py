@@ -65,6 +65,11 @@ y_train_binary.to_csv(os.path.join(save_dir, 'y_train_label.csv'), index=False)
 y_val_binary.to_csv(os.path.join(save_dir, 'y_val_label.csv'), index=False)
 y_test_binary.to_csv(os.path.join(save_dir, 'y_test_label.csv'), index=False)
 
+#Sanity check if datasets dont have leaked data
+assert not X_train.isin(X_test).any().any(), "X_train contains data from X_test"
+assert not X_train.isin(X_val).any().any(), "X_train contains data from X_val"
+assert not X_val.isin(X_test).any().any(), "X_val contains data from X_test"
+assert not X_test.isin(X_val).any().any(), "X_test contains data from X_val"
 
 
 
